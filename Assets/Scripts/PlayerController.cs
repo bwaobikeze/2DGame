@@ -14,7 +14,11 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundlayer;
     public Transform groundCheck;
     public float jumpHeight;
-
+//shooting variables
+public Transform gunTip;
+public GameObject bullet;
+ float fireRate=0.5f;
+float nextFire=0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +39,7 @@ public class PlayerController : MonoBehaviour
         myAnim.SetFloat("Speed", Mathf.Abs(move));
 
         body.velocity = new Vector2(move * PlayerSpeed, body.velocity.y);
+        //facing direction
         if (move > 0 && !frontDirection)
         {
             flip();
@@ -55,8 +60,14 @@ public class PlayerController : MonoBehaviour
             body.AddForce(new Vector2(0, jumpHeight));
 
         }
+        //shooting
+        if(Input.GetAxisRaw("Fire1")>0){
+            fireRocket();
+        }
+
 
     }
+    //turning player around function
     void flip()
     {
         frontDirection = !frontDirection;
@@ -64,5 +75,18 @@ public class PlayerController : MonoBehaviour
         scale.x *= -1;
         transform.localScale = scale;
 
+    }
+    //shooting function
+    void fireRocket(){
+        if(Time.time > nextFire){
+            nextFire=Time.time+fireRate;
+            if(frontDirection){
+                Instantiate(bullet, gunTip.position, Quaternion.Euler(new Vector3(0,0,0)));
+            }else if(!frontDirection){
+                                Instantiate(bullet, gunTip.position, Quaternion.Euler(new Vector3(0,0,180f)));
+            
+
+            }
+        }
     }
 }
